@@ -34,52 +34,48 @@ namespace DrivingRoutes
         /// Loading the semaphores from file
         /// </summary>
         /// <param name="semaphores"></param>
-        public GMapOverlay LoadSemaphores(out Dictionary<long, Semaphore> semaphores)
+        public Dictionary<long, Semaphore> LoadSemaphores()
         {
-            semaphores = new Dictionary<long, Semaphore>();
+            Dictionary<long, Semaphore> semaphores = new Dictionary<long, Semaphore>();
             XmlNodeList semaphoreNodeList = xmlDoc.DocumentElement.SelectNodes(semaphoresPath);
-            GMapOverlay semaphoresOverlay = new GMapOverlay("Semaphores");
-            Semaphore semaphore = new Semaphore();
 
             foreach(XmlNode semaphoreNode in semaphoreNodeList)
             {
+                Semaphore semaphore = new Semaphore();
                 semaphore.Id = long.Parse(semaphoreNode.SelectSingleNode("Id").InnerText);
                 semaphore.Name = semaphoreNode.SelectSingleNode("Name").InnerText;
                 semaphore.Longitude = double.Parse(semaphoreNode.SelectSingleNode("Long").InnerText);
                 semaphore.Latitude = double.Parse(semaphoreNode.SelectSingleNode("Lat").InnerText);
                 
                 semaphores.Add(semaphore.Id, semaphore);
-                GMapMarker marker = new GMarkerGoogle(new PointLatLng(semaphore.Latitude, semaphore.Longitude),  GMarkerGoogleType.yellow_dot);
-                marker.ToolTipText = semaphore.ToString();
-                semaphoresOverlay.Markers.Add(marker);
+               
             }
-            return semaphoresOverlay;
+            return semaphores;
         }
 
         /// <summary>
         /// Loading the roundabouts from file
         /// </summary>
         /// <param name="roundabouts"></param>
-        public GMapOverlay LoadRoundabouts(out Dictionary<long, Roundabout> roundabouts)
+        public Dictionary<long, Roundabout> LoadRoundabouts()
         {
-            roundabouts = new Dictionary<long, Roundabout>();
+            Dictionary<long, Roundabout> roundabouts = new Dictionary<long, Roundabout>();
             XmlNodeList roundaboutNodeList = xmlDoc.DocumentElement.SelectNodes(roundaboutsPath);
-            GMapOverlay roundaboutOverlay = new GMapOverlay("Roundabout");
-            Roundabout roundabout = new Roundabout();
+            //GMapOverlay roundaboutOverlay = new GMapOverlay("Roundabout");
+            
             
             foreach(XmlNode roundaboutNode in roundaboutNodeList)
             {
+                Roundabout roundabout = new Roundabout();
                 roundabout.Id = long.Parse(roundaboutNode.SelectSingleNode("Id").InnerText);
                 roundabout.Name = roundaboutNode.SelectSingleNode("Name").InnerText;
                 roundabout.Longitude = double.Parse(roundaboutNode.SelectSingleNode("Long").InnerText);
                 roundabout.Latitude = double.Parse(roundaboutNode.SelectSingleNode("Lat").InnerText);
 
                 roundabouts.Add(roundabout.Id, roundabout);
-                GMapMarker marker = new GMarkerGoogle(new PointLatLng(roundabout.Latitude, roundabout.Longitude), GMarkerGoogleType.blue_dot);
-                marker.ToolTipText = roundabout.ToString();
-                roundaboutOverlay.Markers.Add(marker);
+                
             }
-            return roundaboutOverlay;
+            return roundabouts;
         }
 
         

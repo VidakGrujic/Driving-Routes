@@ -1,5 +1,8 @@
 ﻿using DrivingRoutes.Model;
+using GMap.NET;
 using GMap.NET.MapProviders;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,13 +41,46 @@ namespace DrivingRoutes
             gmap.Position = new GMap.NET.PointLatLng(45.254765, 19.844184);
             gmap.ShowCenter = false;
             elementLoader = new ElementLoader();
-            
+            semaphores = elementLoader.LoadSemaphores();
+            roundabouts = elementLoader.LoadRoundabouts();
+
+        }
+
+        private GMapOverlay AddSemaphoresToMap(Dictionary<long, Semaphore> semaphores)
+        {
+            GMapOverlay semaphoresOverlay = new GMapOverlay("Semaphores");
+            foreach(Semaphore semaphore in semaphores.Values)
+            {
+
+                GMapMarker marker = new GMarkerGoogle(new PointLatLng(semaphore.Latitude, semaphore.Longitude), GMarkerGoogleType.yellow_dot);
+                marker.ToolTipText = semaphore.ToString();
+                //TODO: Here you should add event for mouse click, enetr and leave click
+
+                semaphoresOverlay.Markers.Add(marker);
+            }
+            return semaphoresOverlay;
+        }
+
+        private GMapOverlay AddRoundaboutsToMap(Dictionary<long, Roundabout> roundabouts)
+        {
+            GMapOverlay roundaboutsOverlay = new GMapOverlay("Roundabouts");
+            foreach(Roundabout roundabout in roundabouts.Values)
+            {
+                
+                GMapMarker marker = new GMarkerGoogle(new PointLatLng(roundabout.Latitude, roundabout.Longitude), GMarkerGoogleType.blue_dot);
+                marker.ToolTipText = roundabout.ToString();
+                roundaboutsOverlay.Markers.Add(marker);
+            }
+            return roundaboutsOverlay;
         }
 
         private void LoadModelButton_Click(object sender, RoutedEventArgs e)
         {
-            gmap.Overlays.Add(elementLoader.LoadSemaphores(out semaphores));
-            gmap.Overlays.Add(elementLoader.LoadRoundabouts(out roundabouts));
+            gmap.Overlays.Add(AddSemaphoresToMap(semaphores));
+            gmap.Overlays.Add(AddRoundaboutsToMap(roundabouts));
+               
+
+
 
             gmap.Zoom++;
             gmap.Zoom--;
