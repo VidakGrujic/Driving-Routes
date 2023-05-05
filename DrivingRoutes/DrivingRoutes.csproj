@@ -67,8 +67,15 @@
     <Compile Include="AddRoute.xaml.cs">
       <DependentUpon>AddRoute.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AddRouteInfo.xaml.cs">
+      <DependentUpon>AddRouteInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RouteCRUD.cs" />
     <Page Include="AddRoute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddRouteInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

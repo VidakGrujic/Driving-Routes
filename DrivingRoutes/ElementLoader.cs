@@ -17,7 +17,7 @@ namespace DrivingRoutes
         /// <summary>
         /// The file paths to file and elements in file
         /// </summary>
-        private string filePath = "../../DrivingElements.xml";
+        private string filePath = "DrivingElements.xml";
         private string semaphoresPath = "/DrivingElements/Semaphores/Semaphore";
         private string roundaboutsPath = "/DrivingElements/Roundabouts/Roundabout";
         private string pathsPath = "/DrivingElements/Paths/Path";

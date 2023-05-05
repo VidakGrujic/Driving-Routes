@@ -8,6 +8,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        
+        <DockPanel>
+            <Grid DockPanel.Dock="Right" Width="184">
+                <Button x:Name="LoadModelButton" Margin="10,6,10,416" Click="LoadModelButton_Click" Content="Load Model" RenderTransformOrigin="0.5,0.5"></Button>
+                <Button x:Name="AddRouteButton"  Click="AddRouteButton_Click" Content="Add Route" Margin="10,413,10,10"/>
+                <TextBlock x:Name="errorTextBlock" Margin="11,165,10,65" Background="LightGray" RenderTransformOrigin="0.5,0.5" TextWrapping="Wrap" ></TextBlock>
+                <Label Content="Enter route name" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="10,49,10,374" RenderTransformOrigin="0.5,0.5"></Label>
+                <TextBox Margin="10,81,10,321" x:Name="routeNameTextBox" BorderBrush="Black" RenderTransformOrigin="0.5,0.5" ></TextBox>
+            </Grid>
+            <WindowsFormsHost Width="616">
+                <gmf:GMapControl x:Name="gmap" CanDragMap="True" MarkersEnabled="True" RoutesEnabled="True" MinZoom="2" MaxZoom="18" Zoom="14"/>
+            </WindowsFormsHost>
+        </DockPanel>
     </Grid>
 </UserControl>

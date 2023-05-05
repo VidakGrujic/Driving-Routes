@@ -37,5 +37,11 @@ namespace DrivingRoutes.Model
         {
             return $"Id: {id}, Name: {name}";
         }
+
+        public override bool Equals(object obj)
+        {
+            return ((Element)obj).Id == this.Id;
+        }
     }
+
 }
