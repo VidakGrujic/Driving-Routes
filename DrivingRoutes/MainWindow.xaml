@@ -8,13 +8,17 @@
         xmlns:gmf="clr-namespace:GMap.NET.WindowsForms;assembly=GMap.NET.WindowsForms"
         xmlns:gm="clr-namespace:GMap.NET;assembly=GMap.NET.Core"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        Title="MainWindow" Height="600" Width="900">
+        Title="MainWindow" Height="800" Width="1000">
     <Grid>
         <DockPanel>
-            <StackPanel Height="50" DockPanel.Dock="Top">
-                <Button x:Name="LoadModelButton" Width="200" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadModelButton_Click">Load Model</Button>
-            </StackPanel>
-            <WindowsFormsHost>
+            <Grid Height="50" DockPanel.Dock="Top">
+                <Button x:Name="LoadModelButton" Width="219" HorizontalAlignment="Left" Margin="19,78,0,-51" Click="LoadModelButton_Click" Content="Load Model"/>
+                <Button x:Name="AddRouteButton" Width="219" HorizontalAlignment="Left" Click="AddRouteButton_Click" Content="Add Route" Margin="19,26,0,0"/>
+                <Label x:Name="errorLabel" Margin="286,26,388.6,-51" BorderBrush="Black" BorderThickness="1"/>
+                <Label Content="Enter route name" Margin="749,7,130.6,0"></Label>
+                <TextBox Margin="654,41,36.6,-51" x:Name="routeNameTextBox" BorderBrush="Black" ></TextBox>
+            </Grid>
+            <WindowsFormsHost Margin="0,68.4,0,0.4">
                 <gmf:GMapControl x:Name="gmap" CanDragMap="True" MarkersEnabled="True" RoutesEnabled="True" MinZoom="2" MaxZoom="18" Zoom="14"/>
             </WindowsFormsHost>
         </DockPanel>

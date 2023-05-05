@@ -13,8 +13,7 @@ namespace DrivingRoutes.Model
 
         public Point()
         {
-            longitude = 0.0;
-            latitude = 0.0;
+           
         }
 
         public Point(double longitude, double latitude)

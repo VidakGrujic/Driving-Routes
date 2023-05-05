@@ -64,6 +64,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddRoute.xaml.cs">
+      <DependentUpon>AddRoute.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RouteCRUD.cs" />
+    <Page Include="AddRoute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -73,6 +81,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ElementLoader.cs" />
+    <Compile Include="HelperFunctions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -83,6 +92,7 @@
     <Compile Include="Model\Path.cs" />
     <Compile Include="Model\Point.cs" />
     <Compile Include="Model\Roundabout.cs" />
+    <Compile Include="Model\Route.cs" />
     <Compile Include="Model\Semaphore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
