@@ -195,6 +195,26 @@ namespace DrivingRoutes
             return routes;
         }
 
+        public static bool DeleteRouteFromFile(Route route)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("routes.xml");
+
+            XmlNode root = doc.SelectSingleNode("Routes");
+            XmlNode deleteNode = root.SelectSingleNode($"Route[Name='{route.RouteName}']");
+            if(root.RemoveChild(deleteNode) != null)
+            {
+                doc.Save("routes.xml");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+
         private static Element MakeElementObject(string type)
         {
             switch (type)
@@ -208,6 +228,7 @@ namespace DrivingRoutes
             }
         }
 
+        
 
 
     }

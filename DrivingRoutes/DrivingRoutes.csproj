@@ -70,12 +70,26 @@
     <Compile Include="AddRouteInfo.xaml.cs">
       <DependentUpon>AddRouteInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeleteRoute.xaml.cs">
+      <DependentUpon>DeleteRoute.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FindRoute.xaml.cs">
+      <DependentUpon>FindRoute.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RouteCRUD.cs" />
     <Page Include="AddRoute.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AddRouteInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeleteRoute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FindRoute.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

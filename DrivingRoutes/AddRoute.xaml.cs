@@ -120,6 +120,7 @@ namespace DrivingRoutes
             gmap.Zoom++;
             gmap.Zoom--;
 
+            LoadModelButton.IsEnabled = false;
         }
 
         private void marker_OnMarkerClick(GMapMarker marker, MouseEventArgs e)

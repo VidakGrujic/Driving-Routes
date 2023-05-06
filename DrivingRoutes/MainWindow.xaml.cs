@@ -37,6 +37,29 @@ namespace DrivingRoutes
             InitializeComponent();
         }
 
-        
+        public void SetActiveUserControl(UserControl control)
+        {
+            addControl.Visibility = Visibility.Collapsed;
+            findControl.Visibility = Visibility.Collapsed;
+            deleteControl.Visibility = Visibility.Collapsed;
+
+            control.Visibility = Visibility.Visible;
+        }
+
+
+        private void btnAddRoute_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveUserControl(addControl);
+        }
+
+        private void btnFindRoute_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveUserControl(findControl);
+        }
+
+        private void btnDeleteRoute_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveUserControl(deleteControl);
+        }
     }
 }
