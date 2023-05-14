@@ -39,10 +39,11 @@ namespace DrivingRoutes
         Dictionary<long, Element> allElements;
         string semaphoreOverlayId = "Semaphores";
         string roundaboutOverlayId = "Roundabouts";
-        int scaleConstant = 20; //constant that will be used for the increasing the size of the marker
-        string routeFilePath = "routes.xml";
+       
+        //string routeFilePath = "routes.xml";
 
         GMapOverlay routesOverlay; //ovo mi treba van jer hocu da obrisem staru rutu kad dodajem novu
+        GMapOverlay markersAboveOverlay;
 
         List<GMapMarker> routeMarkers; //this list will be used for marker that have been chosen for the route
 
@@ -60,7 +61,8 @@ namespace DrivingRoutes
             gmap.ShowCenter = false;
 
             routeMarkers = new List<GMapMarker>();
-
+           
+           
            
         }
 
@@ -117,26 +119,38 @@ namespace DrivingRoutes
             gmap.Overlays.Add(GetRoundaboutOverlay(roundabouts));
             gmap.OnMarkerClick += new MarkerClick(marker_OnMarkerClick);
 
+            //dodacu ga da bi mogao u njega da dodajm neke elemenete
+            //mora da se doda posle svih drugih markera
+            gmap.Overlays.Add(new GMapOverlay("MarkersAboveOverlay"));
+
             gmap.Zoom++;
             gmap.Zoom--;
 
             LoadModelButton.IsEnabled = false;
         }
 
+        //resen problem da se napravi da preko kliknutog markera bude neki novi marker
         private void marker_OnMarkerClick(GMapMarker marker, MouseEventArgs e)
         {
+            markersAboveOverlay = gmap.Overlays.FirstOrDefault(overlay => overlay.Id == "MarkersAboveOverlay");
             //left button click adds the marker into the list of chosen markers for the route
-            if (e.Button == MouseButtons.Left /*ovde dodati zastitu ako korisnik 2 puta klikne na element*/)
+            if (e.Button == MouseButtons.Left && !routeMarkers.Contains(marker))
             {
-                marker.Size = new System.Drawing.Size(marker.Size.Width + scaleConstant, marker.Size.Height + scaleConstant);
+                GMapMarker markerAboveClicked = new GMarkerGoogle(new PointLatLng(marker.Position.Lat, marker.Position.Lng), GMarkerGoogleType.red_dot);
+                markersAboveOverlay.Markers.Add(markerAboveClicked);
                 routeMarkers.Add(marker);
             }
             //right button click removes the marker from list of chosen markers fot the route
-            else if (e.Button == MouseButtons.Right)
+            else if (e.Button == MouseButtons.Right && routeMarkers.Contains(marker))
             {
-                marker.Size = new System.Drawing.Size(marker.Size.Width - scaleConstant, marker.Size.Height - scaleConstant);
+                GMapMarker markerAboveClicked = markersAboveOverlay.Markers.First(markerToRemove => markerToRemove.Position == marker.Position);
+                if (markerAboveClicked != null)
+                {
+                    markersAboveOverlay.Markers.Remove(markerAboveClicked);
+                }
                 routeMarkers.Remove(marker);
             }
+           
         }
 
         private void AddRouteButton_Click(object sender, RoutedEventArgs e)
@@ -150,16 +164,8 @@ namespace DrivingRoutes
             //ovo su mi putanje koje se nalaze izmedju ovih elemenata
             List<Path> routePaths = new List<Path>();
 
-            //there msut be at least 2 chosen markers for the route
-            if (routeMarkers.Count <= 2)
-            {
-                errorTextBlock.Text = "It must be at least 2 chosen marker for the route";
-                errorTextBlock.Foreground = Brushes.Red;
-
-                ReturnToDefaultSize(routeMarkers);
-                
-            }
-            else if (string.IsNullOrEmpty(routeNameTextBox.Text))
+            
+            if (string.IsNullOrEmpty(routeNameTextBox.Text))
             {
                 routeNameTextBox.BorderBrush = Brushes.Red;
                 errorTextBlock.Text = "There must be the name of the route";
@@ -191,92 +197,106 @@ namespace DrivingRoutes
                     routeElements.Add(allElements[id]);
                 }
 
-                //ako ruta ne postoji onda je mozemo dodati
-                if (!IsRouteExists(routeElements))
+                if (IsContainAllElements(routeElements))
                 {
-                    //step 2: sort the list
-                    markerIDs = markerIDs.OrderBy(i => i).ToList();
-
-                    //step 3: get routes using this list
-                    for (int i = 0; i < markerIDs.Count; i++)
+                    //ako ruta ne postoji onda je mozemo dodati
+                    if (!IsRouteExists(routeElements))
                     {
+                        //step 2: sort the list
+                        markerIDs = markerIDs.OrderBy(i => i).ToList();
+
+                        //step 3: get routes using this list
+                        for (int i = 0; i < markerIDs.Count; i++)
+                        {
+
+
+                            //mora da razlozim kad je count = 2, jer tad treba samo jedna iteracija
+                            //u svim ostalim slucajevima broj iteracija je count, ako imamo 3 elementa, onda 3 iteracije
+                            if (markerIDs.Count == 2)
+                            {
+                                //ovo slucaj da smo dosli do kraja i onda treba da spojimo prvi i poslednji element
+                                long pathId = GetPathIdFromElements(markerIDs[0], markerIDs[markerIDs.Count - 1]);
+                                routePaths.Add(paths[pathId]);
+                                break; //mora break jer ne zelimo da dva puta udje u isto
+                            }
+                            else if(i != markerIDs.Count - 1)
+                            {
+                                long pathId = GetPathIdFromElements(markerIDs[i], markerIDs[i + 1]);
+                                routePaths.Add(paths[pathId]);
+                            }
+                            else
+                            {
+                                //ovo slucaj da smo dosli do kraja i onda treba da spojimo prvi i poslednji element
+                                long pathId = GetPathIdFromElements(markerIDs[0], markerIDs[markerIDs.Count - 1]);
+                                routePaths.Add(paths[pathId]);
+                            }
+                        }
+
+                        List<GMapRoute> routesPath = GetPathRoutes(routePaths.ToDictionary(p => p.Id, p => p));
+                        routesOverlay = new GMapOverlay("Route");
+
+                        foreach (GMapRoute route in routesPath)
+                        {
+                            routesOverlay.Routes.Add(route);
+                        }
+
+                        gmap.Overlays.Add(routesOverlay);
+
+                        gmap.Zoom++;
+                        gmap.Zoom--;
+
+                        //smanjimo elemente
+                        ClearRouteAndAboveOverlay(routeMarkers);
+
+
+                        //sad treba da upisem u fajl 
+                        // 1 - routeElements - tu su kruzni tokovi i semafori
+                        // 2 - routePaths - tu su sve putanje izmedju ta semafora i kruznih tokova
+
+                        //provere da li ta ista ruta vec postoji i da li njeno ime vec postoji
+
+                        routeNameTextBox.BorderBrush = Brushes.Black;
+
+                        double routeLength = Math.Round(HelperFunctions.CalculateRouteLength(routePaths), 2);
+
+                        errorTextBlock.Text = $"The length of {routeNameTextBox.Name} route is {routeLength}km.";
+
+                        Route newRoute = new Route(routeNameTextBox.Text, routeLength, routeElements, routePaths);
+                        routes.Add(newRoute);
+                        RouteCRUD.AddRouteToFile(newRoute);
+
+                        errorTextBlock.Text = "Successfully added new route";
+                        errorTextBlock.Foreground = Brushes.Green;
+
+                        AddRouteInfo addRouteInfoWindow = new AddRouteInfo(newRoute);
+                        addRouteInfoWindow.Show();
+
+
                         /*
-                        ne treba da pravim razlicite dictionary za svaki semafore i kruzne tokove
-                        treba da spojim ta dva dictionary jer svakako imaju razlicite id
-                        ako ih ne spojim, moracu za svaku glupost da proveravam da li je semafor ili kruzni tok sto nije dobro
+                         algoritam radi tako sto sortiram lisstu id markera, potom u dictionary trazim trenutni id i sledeci id
+                        spojim ta dva id da bih dobio id od patha, potom nadjem path u dictionary
+                        kad nadjem path napravim GMapRoute i onda iscrtavam
+                        za dobijanje GMapRouta mogu da koristim ovu GetGMapRoute 
                         */
 
-                        //ovo je slucaj da je normalno
-                        if (i != markerIDs.Count - 1)
-                        {
-                            long pathId = GetPathIdFromElements(markerIDs[i], markerIDs[i + 1]);
-                            routePaths.Add(paths[pathId]);
-                        }
-                        else
-                        {
-                            //ovo slucaj da smo dosli do kraja i onda treba da spojimo prvi i poslednji element
-                            long pathId = GetPathIdFromElements(markerIDs[0], markerIDs[markerIDs.Count - 1]);
-                            routePaths.Add(paths[pathId]);
-                        }
+                        /*ako hoocu da izbacim overlay ruta samo kazem gmap.overlays.remove(routeOverlay)
+                         nastavljam neki drugi put, sad sam umoran*/
+
                     }
-
-                    List<GMapRoute> routesPath = GetPathRoutes(routePaths.ToDictionary(p => p.Id, p => p));
-                    routesOverlay = new GMapOverlay("Route");
-
-                    foreach (GMapRoute route in routesPath)
+                    else
                     {
-                        routesOverlay.Routes.Add(route);
+                        errorTextBlock.Text = "Route exists, please make a new route";
+                        errorTextBlock.Foreground = Brushes.Red;
+
+                        ClearRouteAndAboveOverlay(routeMarkers);
                     }
-
-                    gmap.Overlays.Add(routesOverlay);
-
-                    gmap.Zoom++;
-                    gmap.Zoom--;
-
-                    //smanjimo elemente
-                    ReturnToDefaultSize(routeMarkers);
-
-
-                    //sad treba da upisem u fajl 
-                    // 1 - routeElements - tu su kruzni tokovi i semafori
-                    // 2 - routePaths - tu su sve putanje izmedju ta semafora i kruznih tokova
-
-                    //provere da li ta ista ruta vec postoji i da li njeno ime vec postoji
-
-                    routeNameTextBox.BorderBrush = Brushes.Black;
-
-                    double routeLength = Math.Round(HelperFunctions.CalculateRouteLength(routePaths), 2);
-
-                    errorTextBlock.Text = $"The length of {routeNameTextBox.Name} route is {routeLength}km.";
-
-                    Route newRoute = new Route(routeNameTextBox.Text, routeLength, routeElements, routePaths);
-                    routes.Add(newRoute);
-                    RouteCRUD.AddRouteToFile(newRoute);
-
-                    errorTextBlock.Text = "Successfully added new route";
-                    errorTextBlock.Foreground = Brushes.Green;
-
-                    AddRouteInfo addRouteInfoWindow = new AddRouteInfo(newRoute);
-                    addRouteInfoWindow.Show();
-
-
-                    /*
-                     algoritam radi tako sto sortiram lisstu id markera, potom u dictionary trazim trenutni id i sledeci id
-                    spojim ta dva id da bih dobio id od patha, potom nadjem path u dictionary
-                    kad nadjem path napravim GMapRoute i onda iscrtavam
-                    za dobijanje GMapRouta mogu da koristim ovu GetGMapRoute 
-                    */
-
-                    /*ako hoocu da izbacim overlay ruta samo kazem gmap.overlays.remove(routeOverlay)
-                     nastavljam neki drugi put, sad sam umoran*/
-
                 }
                 else
                 {
-                    errorTextBlock.Text = "Route exists, please make a new route";
+                    errorTextBlock.Text = "Route has to have at least one of every element type";
                     errorTextBlock.Foreground = Brushes.Red;
 
-                    ReturnToDefaultSize(routeMarkers);
+                    ClearRouteAndAboveOverlay(routeMarkers);
                 }
             }
         }
@@ -350,15 +370,34 @@ namespace DrivingRoutes
             return false;
         }
 
-        private void ReturnToDefaultSize(List<GMapMarker> routeMarkers)
+        private void ClearRouteAndAboveOverlay(List<GMapMarker> routeMarkers)
         {
-            foreach (GMapMarker routeMarker in routeMarkers)
-            {
-                routeMarker.Size = new System.Drawing.Size(routeMarker.Size.Width - scaleConstant, routeMarker.Size.Height - scaleConstant);
-            }
+            markersAboveOverlay = gmap.Overlays.FirstOrDefault(overlay => overlay.Id == "MarkersAboveOverlay");
+            markersAboveOverlay.Markers.Clear();
             routeMarkers.Clear();
             gmap.Zoom++;
             gmap.Zoom--;
+        }
+
+        private bool IsContainAllElements(List<Element> routeElements)
+        {
+            bool containsSemaphore = false;
+            bool containsRoundabout = false;
+
+            foreach(Element e in routeElements)
+            {
+                string type = e.GetType().ToString().Split('.')[2];
+                switch (type)
+                {
+                    case "Semaphore":
+                        containsSemaphore = true;
+                        break;
+                    case "Roundabout":
+                        containsRoundabout = true;
+                        break;
+                }
+            }
+            return containsSemaphore && containsRoundabout;
         }
     }
 }

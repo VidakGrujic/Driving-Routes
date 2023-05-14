@@ -108,8 +108,13 @@ namespace DrivingRoutes
                     //posto se iz nekog razloga poziva event, mi taj evenet obrisemo pa posle
                     //brisanja itema mi ga ponovo dodajemo
                     routesComboBox.SelectionChanged -= routesComboBox_SelectionChanged;
-                    routesComboBox.Items.Remove(deleteRouteName);
-                    routesComboBox.Text = routes.Keys.ToArray()[0];
+
+                    //provera u slucaju sve rute da obrisemo
+                    if (routes.Keys.Count != 0)
+                    {
+                        routesComboBox.Items.Remove(deleteRouteName);
+                        routesComboBox.Text = routes.Keys.ToArray()[0];
+                    }
                     routesComboBox.SelectionChanged += routesComboBox_SelectionChanged;
 
                 }
@@ -141,11 +146,7 @@ namespace DrivingRoutes
                 routeRetrieve = null;
                 routeElementMarkersRetrieve = null;
                 routePathMarkersRetrieve = null;
-
-                
-
-
-            }
+           }
 
         }
 

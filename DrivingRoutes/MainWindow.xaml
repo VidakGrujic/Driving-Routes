@@ -14,9 +14,9 @@
         <Button x:Name="btnFindRoute" Content="Find Route" Margin="205,0,439,505" Click="btnFindRoute_Click"></Button>
         <Button x:Name="btnDeleteRoute" Content="Delete Route" Margin="410,0,234,505" Click="btnDeleteRoute_Click"></Button>
         <Grid x:Name="gridContainer" Margin="0,34,0,10">
-            <local:AddRoute x:Name="addControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="2" ></local:AddRoute>
+            <local:AddRoute x:Name="addControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Grid.ColumnSpan="2" ></local:AddRoute>
             <local:FindRoute x:Name="findControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="2" ></local:FindRoute>
-            <local:DeleteRoute x:Name="deleteControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Grid.ColumnSpan="2"></local:DeleteRoute>
+            <local:DeleteRoute x:Name="deleteControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="2"></local:DeleteRoute>
         </Grid>
 
 

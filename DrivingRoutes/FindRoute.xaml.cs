@@ -195,7 +195,7 @@ namespace DrivingRoutes
             gmap.Overlays.Clear();
             routeElementsTextBox.Text = "";
 
-            //dodavanje nove rute
+           
             GMapOverlay routeOverlay = new GMapOverlay(selectedRouteName);
             foreach (GMapMarker marker in routesElementMarkers[selectedRouteName])
             {
