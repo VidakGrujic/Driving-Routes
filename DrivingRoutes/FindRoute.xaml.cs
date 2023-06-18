@@ -134,8 +134,6 @@ namespace DrivingRoutes
             string key = routes.Keys.ElementAt(index);
             Route value = routes.Values.ElementAt(index);
 
-            KeyValuePair<string, Route> pair = routes.ElementAt(index);
-
             ShowRoute(key, value);
 
             routesComboBox.Text = key;

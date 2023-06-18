@@ -18,17 +18,23 @@ namespace DrivingRoutes
         /// The file paths to file and elements in file
         /// </summary>
         private string filePath = "DrivingElements.xml";
+        private string videoPointsFilePath = "VideoPositions.xml";
         private string semaphoresPath = "/DrivingElements/Semaphores/Semaphore";
         private string roundaboutsPath = "/DrivingElements/Roundabouts/Roundabout";
         private string pathsPath = "/DrivingElements/Paths/Path";
+        private string videoPointsPaths = "/Positions/Position";
         private Dictionary<long, Element> allElements = new Dictionary<long, Element>();
 
 
         private XmlDocument xmlDoc;
+        private XmlDocument xmlDocVideoPoints;
         public ElementLoader()
         {
             xmlDoc = new XmlDocument();
             xmlDoc.Load(filePath);
+
+            xmlDocVideoPoints = new XmlDocument();
+            xmlDocVideoPoints.Load(videoPointsFilePath);
         }
 
         /// <summary>
@@ -78,6 +84,22 @@ namespace DrivingRoutes
             return roundabouts;
         }
 
+        public Dictionary<double, PointLatLng> GetVideoPoints()
+        {
+            Dictionary<double, PointLatLng> videoPoints = new Dictionary<double, PointLatLng>();
+            XmlNodeList videoPointsNodeList = xmlDocVideoPoints.DocumentElement.SelectNodes(videoPointsPaths);
+
+            foreach(XmlNode videoPointNode in videoPointsNodeList)
+            {
+                TimeSpan time = TimeSpan.Parse(videoPointNode.SelectSingleNode("Time").InnerText);
+                PointLatLng point = new PointLatLng(double.Parse(videoPointNode.SelectSingleNode("Lat").InnerText),
+                                                    double.Parse(videoPointNode.SelectSingleNode("Long").InnerText));
+                videoPoints.Add(time.TotalSeconds, point);
+            }
+            return videoPoints;
+        }
+        
+
 
         public Dictionary<long, Path> LoadPaths()
         {
@@ -95,8 +117,6 @@ namespace DrivingRoutes
             }
             return paths;
         }
-        
-
         private List<Point> GetPathPoints(string points)
         {
             List<Point> pointsList = new List<Point>();
@@ -123,7 +143,6 @@ namespace DrivingRoutes
             return allElements;
         }
 
-
-
+        
     }
 }

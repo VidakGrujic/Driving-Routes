@@ -17,7 +17,11 @@
                 <TextBox Margin="10,81,10,321" x:Name="routeNameTextBox" BorderBrush="Black" RenderTransformOrigin="0.5,0.5" ></TextBox>
             </Grid>
             <WindowsFormsHost Width="616">
-                <gmf:GMapControl x:Name="gmap" CanDragMap="True" MarkersEnabled="True" RoutesEnabled="True" MinZoom="2" MaxZoom="18" Zoom="14"/>
+                <gmf:GMapControl x:Name="gmap"
+                                 CanDragMap="True" 
+                                 MarkersEnabled="True"
+                                 RoutesEnabled="True"
+                                 MinZoom="2" MaxZoom="18" Zoom="14"/>
             </WindowsFormsHost>
         </DockPanel>
     </Grid>

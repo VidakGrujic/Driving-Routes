@@ -10,13 +10,20 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         Title="MainWindow" Height="565" Width="850">
     <Grid Margin="0,0,0,-3">
-        <Button x:Name="btnAddRoute" Content="Add Route" Margin="0,0,644,505" Click="btnAddRoute_Click"></Button>
-        <Button x:Name="btnFindRoute" Content="Find Route" Margin="205,0,439,505" Click="btnFindRoute_Click"></Button>
-        <Button x:Name="btnDeleteRoute" Content="Delete Route" Margin="410,0,234,505" Click="btnDeleteRoute_Click"></Button>
+        <Button x:Name="btnAddRoute" Content="Add Route" Margin="0,0,644.2,505.2" Click="btnAddRoute_Click"></Button>
+        <Button x:Name="btnFindRoute" Content="Find Route" Margin="205,0,430.2,505.2" Click="btnFindRoute_Click"></Button>
+        <Button x:Name="btnDeleteRoute" Content="Delete Route" Margin="418,0,214.2,505.2" Click="btnDeleteRoute_Click"></Button>
+        <Button x:Name="btnRealTime" Content="Show route in real time" Margin="634,1,0.2,504.2" Click="btnRealTime_Click"></Button>
         <Grid x:Name="gridContainer" Margin="0,34,0,10">
-            <local:AddRoute x:Name="addControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Grid.ColumnSpan="2" ></local:AddRoute>
-            <local:FindRoute x:Name="findControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="2" ></local:FindRoute>
-            <local:DeleteRoute x:Name="deleteControl" Margin="10,28,10,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="2"></local:DeleteRoute>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="674*"/>
+                <ColumnDefinition Width="145*"/>
+                <ColumnDefinition Width="24*"/>
+            </Grid.ColumnDefinitions>
+            <local:AddRoute x:Name="addControl" Margin="10,28,10.2,0" Height="455" VerticalAlignment="Top" Grid.ColumnSpan="3" ></local:AddRoute>
+            <local:FindRoute x:Name="findControl" Margin="10,28,10.2,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="3" ></local:FindRoute>
+            <local:DeleteRoute x:Name="deleteControl" Margin="10,28,10.2,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="3"></local:DeleteRoute>
+            <local:ShowRouteRealTime x:Name="realTimeControl" Margin="10,28,10.2,0" Height="455" VerticalAlignment="Top" Visibility="Collapsed" Grid.ColumnSpan="3"></local:ShowRouteRealTime>
         </Grid>
 
 

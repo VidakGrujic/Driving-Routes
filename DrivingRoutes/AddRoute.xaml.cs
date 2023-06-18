@@ -71,7 +71,9 @@ namespace DrivingRoutes
             GMapOverlay semaphoresOverlay = new GMapOverlay(semaphoreOverlayId);
             foreach (Semaphore semaphore in semaphores.Values)
             {
-                GMapMarker marker = new GMarkerGoogle(new PointLatLng(semaphore.Latitude, semaphore.Longitude), GMarkerGoogleType.yellow_dot);
+                GMapMarker marker = new GMarkerGoogle(
+                    new PointLatLng(semaphore.Latitude, semaphore.Longitude), 
+                    GMarkerGoogleType.yellow_dot);
                 marker.ToolTipText = semaphore.ToString();
                 semaphoresOverlay.Markers.Add(marker);
             }
@@ -106,7 +108,6 @@ namespace DrivingRoutes
 
         private void LoadModelButton_Click(object sender, RoutedEventArgs e)
         {
-            //moram ovde da ucitavam jer onda baca neki problem, ne smem u konstruktoru
             elementLoader = new ElementLoader();
             semaphores = elementLoader.LoadSemaphores();
             roundabouts = elementLoader.LoadRoundabouts();
@@ -119,8 +120,6 @@ namespace DrivingRoutes
             gmap.Overlays.Add(GetRoundaboutOverlay(roundabouts));
             gmap.OnMarkerClick += new MarkerClick(marker_OnMarkerClick);
 
-            //dodacu ga da bi mogao u njega da dodajm neke elemenete
-            //mora da se doda posle svih drugih markera
             gmap.Overlays.Add(new GMapOverlay("MarkersAboveOverlay"));
 
             gmap.Zoom++;
@@ -129,39 +128,41 @@ namespace DrivingRoutes
             LoadModelButton.IsEnabled = false;
         }
 
-        //resen problem da se napravi da preko kliknutog markera bude neki novi marker
         private void marker_OnMarkerClick(GMapMarker marker, MouseEventArgs e)
         {
             markersAboveOverlay = gmap.Overlays.FirstOrDefault(overlay => overlay.Id == "MarkersAboveOverlay");
             //left button click adds the marker into the list of chosen markers for the route
             if (e.Button == MouseButtons.Left && !routeMarkers.Contains(marker))
             {
-                GMapMarker markerAboveClicked = new GMarkerGoogle(new PointLatLng(marker.Position.Lat, marker.Position.Lng), GMarkerGoogleType.red_dot);
+                GMapMarker markerAboveClicked = new GMarkerGoogle(
+                    new PointLatLng(marker.Position.Lat, marker.Position.Lng), 
+                    GMarkerGoogleType.red_dot);
                 markersAboveOverlay.Markers.Add(markerAboveClicked);
                 routeMarkers.Add(marker);
             }
             //right button click removes the marker from list of chosen markers fot the route
             else if (e.Button == MouseButtons.Right && routeMarkers.Contains(marker))
             {
-                GMapMarker markerAboveClicked = markersAboveOverlay.Markers.First(markerToRemove => markerToRemove.Position == marker.Position);
+                GMapMarker markerAboveClicked = 
+                    markersAboveOverlay.Markers.First(
+                        markerToRemove => markerToRemove.Position == marker.Position);
                 if (markerAboveClicked != null)
                 {
                     markersAboveOverlay.Markers.Remove(markerAboveClicked);
                 }
                 routeMarkers.Remove(marker);
             }
-           
         }
 
         private void AddRouteButton_Click(object sender, RoutedEventArgs e)
         {
             //brisemo staru rutu
             gmap.Overlays.Remove(routesOverlay);
-            
-            //ovo su mi svi elemnti koji se nalaze na tom putanju, tj. semafori i roundabouts.
-            List<Element> routeElements = new List<Element>();
 
-            //ovo su mi putanje koje se nalaze izmedju ovih elemenata
+            //ovo su svi elemnti koji se nalaze na toj putanju, tj. semafori i roundabouts.
+            List <Element> routeElements = new List<Element>();
+
+            //ovo su sve putanje koje se nalaze izmedju ovih elemenata
             List<Path> routePaths = new List<Path>();
 
             
@@ -170,18 +171,12 @@ namespace DrivingRoutes
                 routeNameTextBox.BorderBrush = Brushes.Red;
                 errorTextBlock.Text = "There must be the name of the route";
                 errorTextBlock.Foreground = Brushes.Red;
-
-                //ovo ne treba da se vraca na staro jer korisnik samo treba da doda ime
-                //ReturnToDefaultSize(routeMarkers);
             }
             else if (IsRouteNameExists(routeNameTextBox.Text))
             {
                 routeNameTextBox.BorderBrush = Brushes.Red;
                 errorTextBlock.Text = "There is already route with the same name";
                 errorTextBlock.Foreground = Brushes.Red;
-
-                //ovo ne treba da se vraca na staro jer korisnik samo treba da doda ime
-                //ReturnToDefaultSize(routeMarkers);
             }
             else
             {
@@ -245,15 +240,12 @@ namespace DrivingRoutes
                         gmap.Zoom++;
                         gmap.Zoom--;
 
-                        //smanjimo elemente
+                        //obrisemo ove crvene
                         ClearRouteAndAboveOverlay(routeMarkers);
-
 
                         //sad treba da upisem u fajl 
                         // 1 - routeElements - tu su kruzni tokovi i semafori
                         // 2 - routePaths - tu su sve putanje izmedju ta semafora i kruznih tokova
-
-                        //provere da li ta ista ruta vec postoji i da li njeno ime vec postoji
 
                         routeNameTextBox.BorderBrush = Brushes.Black;
 

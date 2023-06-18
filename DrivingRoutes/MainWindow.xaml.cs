@@ -42,7 +42,7 @@ namespace DrivingRoutes
             addControl.Visibility = Visibility.Collapsed;
             findControl.Visibility = Visibility.Collapsed;
             deleteControl.Visibility = Visibility.Collapsed;
-
+            realTimeControl.Visibility = Visibility.Collapsed;
             control.Visibility = Visibility.Visible;
         }
 
@@ -60,6 +60,11 @@ namespace DrivingRoutes
         private void btnDeleteRoute_Click(object sender, RoutedEventArgs e)
         {
             SetActiveUserControl(deleteControl);
+        }
+
+        private void btnRealTime_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveUserControl(realTimeControl);
         }
     }
 }
