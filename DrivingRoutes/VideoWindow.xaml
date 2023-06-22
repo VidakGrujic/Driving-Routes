@@ -11,13 +11,23 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-        <MediaElement Source="D:\8. semestar\Racunarska Grafika\Diplomski\DrivingRoutes\DrivingRoutes\bin\Debug\RouteForRealTime.mp4" LoadedBehavior="Manual" ScrubbingEnabled="True" Name="mePlayer" />
+        <MediaElement Source="D:\8. semestar\Racunarska Grafika\Diplomski\DrivingRoutes\DrivingRoutes\bin\Debug\RouteForRealTime.mp4" 
+                      LoadedBehavior="Manual" ScrubbingEnabled="True" Name="mePlayer" />
             <StackPanel Grid.Row="1">
-                <Label Name="lblStatus" Content="Not playing..." HorizontalContentAlignment="Center" Margin="5" />
+                <Label Name="lblStatus" Content="Not playing..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" />
                 <WrapPanel HorizontalAlignment="Center">
-                    <Button Name="btnPlay" Click="btnPlay_Click">Play</Button>
-                    <Button Name="btnPause" Margin="5,0" Click="btnPause_Click">Pause</Button>
-                    <Button Name="btnStop" Click="btnStop_Click">Stop</Button>
+                    <Button Name="btnPlay" MaxHeight="30" MaxWidth="30" Click="btnPlay_Click">
+                        <!--Valjalo bi da se ne koriste apsolutne putanje-->
+                        <Image Source="D:\8. semestar\Racunarska Grafika\Diplomski\DrivingRoutes\DrivingRoutes\Images\play-rounded-button.png"/>
+                    </Button>
+                    <Button Name="btnPause" MaxHeight="30" MaxWidth="30" Margin="5,0" Click="btnPause_Click">
+                        <!--Valjalo bi da se ne koriste apsolutne putanje-->
+                        <Image Source="D:\8. semestar\Racunarska Grafika\Diplomski\DrivingRoutes\DrivingRoutes\Images\round-pause-button.png"/>
+                    </Button>
+                    <Button Name="btnStop" MaxHeight="30" MaxWidth="30" Click="btnStop_Click">
+                        <!--Valjalo bi da se ne koriste apsolutne putanje-->
+                        <Image Source="D:\8. semestar\Racunarska Grafika\Diplomski\DrivingRoutes\DrivingRoutes\Images\stop-button.png"/>
+                    </Button>   
                 </WrapPanel>
             </StackPanel>
      </Grid>

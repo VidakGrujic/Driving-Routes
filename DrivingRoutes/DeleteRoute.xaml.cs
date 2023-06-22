@@ -68,10 +68,10 @@ namespace DrivingRoutes
             routes = RouteCRUD.LoadRoutesFromFile().ToDictionary(p => p.RouteName, p => p);
 
             //napravimo za svaku rutu po marker
-            routesElementMarkers = GetRoutesElementsMarkers(routes);
+            routesElementMarkers = RouteCRUD.GetRoutesElementsMarkers(routes);
 
             //sad za svaku rutu ucitamo path
-            routesPathMarkers = GetRoutesPathsMarkers(routes);
+            routesPathMarkers = RouteCRUD.GetRoutesPathsMarkers(routes);
 
             //postavimo item source na kolekciju kljuceva
             foreach(string key in routes.Keys)
@@ -161,7 +161,7 @@ namespace DrivingRoutes
 
         }
 
-        private Dictionary<string, List<GMapMarker>> GetRoutesElementsMarkers(Dictionary<string, Route> routes)
+        /*private Dictionary<string, List<GMapMarker>> GetRoutesElementsMarkers(Dictionary<string, Route> routes)
         {
             Dictionary<string, List<GMapMarker>> routesElementsMarkers = new Dictionary<string, List<GMapMarker>>();
             foreach (KeyValuePair<string, Route> route in routes)
@@ -207,7 +207,7 @@ namespace DrivingRoutes
                     return GMarkerGoogleType.black_small;
             }
         }
-
+        */
         private void ShowRoute(string selectedRouteName, Route selectedRoute)
         {
             //ciscenje prethodne rute

@@ -1,4 +1,7 @@
 ﻿using DrivingRoutes.Model;
+using GMap.NET;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -134,10 +137,6 @@ namespace DrivingRoutes
 
             //sacuvamo to sto smo promenili
             doc.Save("routes.xml");
-
-
-
-
         }
 
         public static List<Route> LoadRoutesFromFile()
@@ -151,46 +150,7 @@ namespace DrivingRoutes
 
             foreach (XmlNode routeNode in routesNodeList)
             {
-                Route route = new Route();
-                route.RouteName = routeNode.SelectSingleNode("Name").InnerText;
-                route.RouteLength = double.Parse(routeNode.SelectSingleNode("Length").InnerText);
-
-                route.RouteElements = new List<Element>();
-                route.RoutePaths = new List<Path>();
-
-                //u ChildNodes[2] su elementi a ChildNodes[3] su paths
-                foreach (XmlNode routeElement in routeNode.ChildNodes[2].ChildNodes)
-                {
-                    string type = routeElement.SelectSingleNode("Type").InnerText;
-                    Element element = MakeElementObject(type);
-                    element.Id = long.Parse(routeElement.SelectSingleNode("Id").InnerText);
-                    element.Name = routeElement.SelectSingleNode("Name").InnerText;
-                    element.Latitude = double.Parse(routeElement.SelectSingleNode("Latitude").InnerText);
-                    element.Longitude = double.Parse(routeElement.SelectSingleNode("Longitude").InnerText);
-                    route.RouteElements.Add(element);
-                }
-
-                foreach (XmlNode routePath in routeNode.ChildNodes[3].ChildNodes)
-                {
-                    Path path = new Path();
-                    path.Id = long.Parse(routePath.SelectSingleNode("Id").InnerText);
-                    path.Name = routePath.SelectSingleNode("Name").InnerText;
-                    path.Points = new List<Point>();
-
-                    //sad se lista points-ova nalazi na 3 mestu
-                    foreach(XmlNode routePathPoint in routePath.ChildNodes[2].ChildNodes)
-                    {
-                        Point point = new Point();
-                        point.Longitude = double.Parse(routePathPoint.SelectSingleNode("Longitude").InnerText);
-                        point.Latitude = double.Parse(routePathPoint.SelectSingleNode("Latitude").InnerText);
-                        path.Points.Add(point);
-                    }
-
-                    route.RoutePaths.Add(path);
-                }
-
-                routes.Add(route);
-
+                routes.Add(ConvertNodeToRoute(routeNode));
             }
             return routes;
         }
@@ -214,6 +174,21 @@ namespace DrivingRoutes
 
         }
 
+        public static Route GetRouteOnVideo(string routeName)
+        {
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load("routes.xml");
+
+            XmlNode root = doc.SelectSingleNode("Routes");
+            XmlNode videoRoute = root.SelectSingleNode($"Route[Name='{routeName}']");
+            if(videoRoute != null)
+            {
+                return ConvertNodeToRoute(videoRoute);
+            }
+
+            return null;
+        }
 
         private static Element MakeElementObject(string type)
         {
@@ -228,8 +203,117 @@ namespace DrivingRoutes
             }
         }
 
-        
+        private static Route ConvertNodeToRoute(XmlNode routeNode)
+        {
+            Route route = new Route();
+            route.RouteName = routeNode.SelectSingleNode("Name").InnerText;
+            route.RouteLength = double.Parse(routeNode.SelectSingleNode("Length").InnerText);
 
+            route.RouteElements = new List<Element>();
+            route.RoutePaths = new List<Path>();
+
+            //u ChildNodes[2] su elementi a ChildNodes[3] su paths
+            foreach (XmlNode routeElement in routeNode.ChildNodes[2].ChildNodes)
+            {
+                string type = routeElement.SelectSingleNode("Type").InnerText;
+                Element element = MakeElementObject(type);
+                element.Id = long.Parse(routeElement.SelectSingleNode("Id").InnerText);
+                element.Name = routeElement.SelectSingleNode("Name").InnerText;
+                element.Latitude = double.Parse(routeElement.SelectSingleNode("Latitude").InnerText);
+                element.Longitude = double.Parse(routeElement.SelectSingleNode("Longitude").InnerText);
+                route.RouteElements.Add(element);
+            }
+
+            foreach (XmlNode routePath in routeNode.ChildNodes[3].ChildNodes)
+            {
+                Path path = new Path();
+                path.Id = long.Parse(routePath.SelectSingleNode("Id").InnerText);
+                path.Name = routePath.SelectSingleNode("Name").InnerText;
+                path.Points = new List<Point>();
+
+                //sad se lista points-ova nalazi na 3 mestu
+                foreach (XmlNode routePathPoint in routePath.ChildNodes[2].ChildNodes)
+                {
+                    Point point = new Point();
+                    point.Longitude = double.Parse(routePathPoint.SelectSingleNode("Longitude").InnerText);
+                    point.Latitude = double.Parse(routePathPoint.SelectSingleNode("Latitude").InnerText);
+                    path.Points.Add(point);
+                }
+
+                route.RoutePaths.Add(path);
+            }
+
+            return route;
+        }
+
+        public static Dictionary<string, List<GMapMarker>> GetRoutesElementsMarkers(Dictionary<string, Route> routes)
+        {
+            Dictionary<string, List<GMapMarker>> routesElementsMarkers = new Dictionary<string, List<GMapMarker>>();
+            foreach (KeyValuePair<string, Route> route in routes)
+            {
+                List<GMapMarker> elementMarkers = new List<GMapMarker>();
+                foreach (Element element in route.Value.RouteElements)
+                {
+                    GMapMarker elementMarker = new GMarkerGoogle(new PointLatLng(element.Latitude, element.Longitude), GetMarkerType(element));
+                    elementMarker.ToolTipText = element.ToString();
+                    elementMarkers.Add(elementMarker);
+                }
+                routesElementsMarkers.Add(route.Key, elementMarkers);
+            }
+            return routesElementsMarkers;
+        }
+
+        public static Dictionary<string, List<GMapRoute>> GetRoutesPathsMarkers(Dictionary<string, Route> routes)
+        {
+            Dictionary<string, List<GMapRoute>> routesPathsMarkers = new Dictionary<string, List<GMapRoute>>();
+            foreach (KeyValuePair<string, Route> route in routes)
+            {
+                List<GMapRoute> pathRoute = new List<GMapRoute>();
+                foreach (Path path in route.Value.RoutePaths)
+                {
+                    GMapRoute pathMarker = new GMapRoute(HelperFunctions.ConvertPointsToLatLngPonts(path.Points), path.Id.ToString());
+                    pathMarker.Stroke = new System.Drawing.Pen(System.Drawing.Color.Black, 6);
+                    pathRoute.Add(pathMarker);
+                }
+                routesPathsMarkers.Add(route.Key, pathRoute);
+            }
+            return routesPathsMarkers;
+        }
+
+        public static GMarkerGoogleType GetMarkerType(Element element)
+        {
+            switch (element.GetType().ToString().Split('.')[2])
+            {
+                case "Semaphore":
+                    return GMarkerGoogleType.yellow_dot;
+                case "Roundabout":
+                    return GMarkerGoogleType.blue_dot;
+                default:
+                    return GMarkerGoogleType.black_small;
+            }
+        }
+
+
+        public static GMapOverlay GetVideoRouteOverlay(Route videoRoute)
+        {
+            GMapOverlay videoRotueOveraly = new GMapOverlay("VideoRouteOverlay");
+
+            foreach (Element videoRouteElement in videoRoute.RouteElements)
+            {
+                GMapMarker elementMarker = new GMarkerGoogle(new PointLatLng(videoRouteElement.Latitude, videoRouteElement.Longitude), GetMarkerType(videoRouteElement));
+                elementMarker.ToolTipText = videoRouteElement.ToString();
+                videoRotueOveraly.Markers.Add(elementMarker);
+            }
+
+            foreach (Path videoRoutePath in videoRoute.RoutePaths)
+            {
+                GMapRoute pathMarker = new GMapRoute(HelperFunctions.ConvertPointsToLatLngPonts(videoRoutePath.Points), videoRoutePath.Id.ToString());
+                pathMarker.Stroke = new System.Drawing.Pen(System.Drawing.Color.Black, 6);
+                videoRotueOveraly.Routes.Add(pathMarker);
+            }
+
+            return videoRotueOveraly;
+        }
 
     }
 }

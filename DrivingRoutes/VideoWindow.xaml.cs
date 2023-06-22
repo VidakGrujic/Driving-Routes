@@ -36,7 +36,12 @@ namespace DrivingRoutes
 
         Dictionary<double, PointLatLng> videoPoints;
         GMarkerGoogle currentLocation;
+        Route videoRoute;
+        string videoRouteName = "Video Route";
 
+        //markeri i pathovi video rute koje treba da se prikazu
+      
+      
         public VideoWindow(GMapControl gmap)
         {
             InitializeComponent();
@@ -44,13 +49,11 @@ namespace DrivingRoutes
             ElementLoader elementLoader = new ElementLoader();
             videoPoints = elementLoader.GetVideoPoints();
 
-            /*
-             <Time>00:00:00</Time>
-        <Lat>45.264264181</Lat>
-        <Long>19.829853627</Long>*/
-           
+            videoRoute = RouteCRUD.GetRouteOnVideo(videoRouteName);
+            gmap.Overlays.Add(RouteCRUD.GetVideoRouteOverlay(videoRoute));
+
             GMapOverlay overlay = new GMapOverlay("VideoPoints");
-            currentLocation = new GMarkerGoogle(videoPoints[0], GMarkerGoogleType.red_dot);
+            currentLocation = new GMarkerGoogle(videoPoints[0], GMarkerGoogleType.red_pushpin);
             overlay.Markers.Add(currentLocation);
             gmap.Overlays.Add(overlay);
 
@@ -64,6 +67,8 @@ namespace DrivingRoutes
             mePlayer.Play();
             mePlayer.Stop();
             mePlayer.Volume = 0;
+
+           
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -73,14 +78,27 @@ namespace DrivingRoutes
                 if (mePlayer.NaturalDuration.HasTimeSpan)
                 {
                     //u positionu je trenutno vreme, na osnovu njega pristupam recniku
+                    
+                    //prikazujem prvo vreme, pa onda lokaciju
+                   
                     double currentSecond = Math.Floor(mePlayer.Position.TotalSeconds);
                     if (videoPoints.ContainsKey(currentSecond) && currentSecond != 0)
                     {
                         currentLocation.Position = videoPoints[currentSecond];
                     }
-                    lblStatus.Content = String.Format("{0} / {1}", 
-                        mePlayer.Position.ToString(@"mm\:ss"),
-                        mePlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
+
+                    lblStatus.Content = String.Format(
+                        "\t\t{0} / {1}" +
+                        "\n\nRoute name: {2}" +
+                        "\nCurrent location: {3} E, {4} N",
+                             mePlayer.Position.ToString(@"mm\:ss"),
+                             mePlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss"),
+                             videoRoute.RouteName,
+                             currentLocation.Position.Lat,
+                             currentLocation.Position.Lng
+                         );
+
+
                 }
                 else
                 {

@@ -1,5 +1,7 @@
 ﻿using DrivingRoutes.Model;
 using GMap.NET;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +31,6 @@ namespace DrivingRoutes
             }
             return routeLength;
         }
-
         
         private static double CalculatePathLength(List<Point> points)
         {
@@ -55,7 +56,6 @@ namespace DrivingRoutes
             return num / 180 * Math.PI; 
         }
 
-       
-
+    
     }
 }

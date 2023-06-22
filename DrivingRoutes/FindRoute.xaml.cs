@@ -63,10 +63,10 @@ namespace DrivingRoutes
             routes = RouteCRUD.LoadRoutesFromFile().ToDictionary(p => p.RouteName, p => p);
 
             //napravimo za svaku rutu po marker
-            routesElementMarkers = GetRoutesElementsMarkers(routes);
+            routesElementMarkers = RouteCRUD.GetRoutesElementsMarkers(routes);
 
             //sad za svaku rutu ucitamo path
-            routesPathMarkers = GetRoutesPathsMarkers(routes);
+            routesPathMarkers = RouteCRUD.GetRoutesPathsMarkers(routes);
 
             //postavimo item source na kolekciju kljuceva
             routesComboBox.ItemsSource = routes.Keys.ToArray();
@@ -138,53 +138,6 @@ namespace DrivingRoutes
 
             routesComboBox.Text = key;
 
-        }
-
-        private Dictionary<string, List<GMapMarker>> GetRoutesElementsMarkers(Dictionary<string, Route> routes)
-        {
-            Dictionary<string, List<GMapMarker>> routesElementsMarkers = new Dictionary<string, List<GMapMarker>>();
-            foreach (KeyValuePair<string, Route> route in routes)
-            {
-                List<GMapMarker> elementMarkers = new List<GMapMarker>();
-                foreach (Element element in route.Value.RouteElements)
-                {
-                    GMapMarker elementMarker = new GMarkerGoogle(new PointLatLng(element.Latitude, element.Longitude), GetMarkerType(element));
-                    elementMarker.ToolTipText = element.ToString();
-                    elementMarkers.Add(elementMarker);
-                }
-                routesElementsMarkers.Add(route.Key, elementMarkers);
-            }
-            return routesElementsMarkers;
-        }
-
-        private Dictionary<string, List<GMapRoute>> GetRoutesPathsMarkers(Dictionary<string, Route> routes)
-        {
-            Dictionary<string, List<GMapRoute>> routesPathsMarkers = new Dictionary<string, List<GMapRoute>>();
-            foreach(KeyValuePair<string, Route> route in routes)
-            {
-                List<GMapRoute> pathRoute = new List<GMapRoute>();
-                foreach(Path path in route.Value.RoutePaths)
-                {
-                    GMapRoute pathMarker = new GMapRoute(HelperFunctions.ConvertPointsToLatLngPonts(path.Points), path.Id.ToString());
-                    pathMarker.Stroke = new System.Drawing.Pen(System.Drawing.Color.Black, 6);
-                    pathRoute.Add(pathMarker);
-                }
-                routesPathsMarkers.Add(route.Key, pathRoute);
-            }
-            return routesPathsMarkers;
-        }
-
-        private GMarkerGoogleType GetMarkerType(Element element)
-        {
-            switch (element.GetType().ToString().Split('.')[2])
-            {
-                case "Semaphore":
-                    return GMarkerGoogleType.yellow_dot;
-                case "Roundabout":
-                    return GMarkerGoogleType.blue_dot;
-                default:
-                    return GMarkerGoogleType.black_small;
-            }
         }
 
         private void ShowRoute(string selectedRouteName, Route selectedRoute)
