@@ -26,6 +26,9 @@ After loading routes, the user can choose the route for showing by selecting the
 The user can delete route by selecting its name in the combobox. After deleting, the list of routes in combobox will be updated. Additionally, user can retrieve last deleted route, which is similar to the "Undo" operation.   
 
 ### Following current geographical location of the candidate
-During the practical driving exam, there si possibility that exam is recorded by a camera. Some cameras have ability to store current geographical coordinates of every second in the video in their metadata. That information is extracted from metadata and used in the project. During playback of the video, geographical location of the candidate is updated in real time, depending of geographical coordinates in that second of the video. Candidate's location is shown as the marker on the map. 
+During the practical driving exam, there si possibility that exam is recorded by a camera. Some cameras have ability to store current geographical coordinates of every second in the video in their metadata. That information is extracted from metadata and used in the project. During playback of the video, geographical location of the candidate is updated in real time, depending of geographical coordinates in that second of the video. Candidate's location is shown as the pushpin on the map. 
 Note: Because video is recorded by IPhone, information about coordinates in every second of the video had to be added mannualy. Some cameras, such as GoPro, have those information in their metadata, which can be extracted automatically, used appropriate tools. (EXIFTool)
+
+![image](https://github.com/VidakGrujic/Driving-Routes/assets/101202438/502e9d86-00a6-45d2-9461-741c9e952168)
+
 
