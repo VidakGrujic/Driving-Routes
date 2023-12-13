@@ -1,7 +1,7 @@
 # Driving Routes
 This project is a practical part of dipolma thesis **Mapping the trajectory of an object during playback of a geotagged video**
 
-**Programing language: C#, XAML**
+**Programing language: C#, XAML, WPF, XML**
 
 
 ## Description
